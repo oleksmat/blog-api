@@ -6,7 +6,7 @@ import { PostsModule } from './posts/posts.module';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb://localhost/test',
+      process.env['DATABASE_URI'],
       { useFindAndModify: false }
     ),
     AuthModule,

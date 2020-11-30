@@ -1,7 +1,7 @@
 import { JwtModuleOptions } from "@nestjs/jwt";
 
 export const JWT_CONFIG: JwtModuleOptions = {
-  secret: 'SECRET_KEY',
+  secret: process.env['JWT_SECRET'],
   signOptions: { expiresIn: '60s' }
 };
 export const IGNORE_EXPIRATION = true;

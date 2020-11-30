@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  
+  blog-api:
+    build:
+      context: "."
+    networks:
+      - blog-api-net
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URI=mongodb://db/test
+    ports:
+      - "8080:80"
+
+  db:
+    image: mongo
+    networks:
+      - blog-api-net
+    volumes:
+      - dbdata:/data/db
+
+volumes:
+  dbdata:
+
+networks:
+  blog-api-net:
