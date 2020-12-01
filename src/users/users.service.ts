@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { Model } from 'mongoose';
-import { User, UserData, UserDocument, UserInfo, UserSign, validateUserInfo, validateUserSign } from 'src/schemas/users';
+import { User, UserData, UserDocument, UserInfo, UserSign } from 'src/schemas/users';
+import { compare, hash } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +15,8 @@ export class UsersService {
 
   async registerUserAndGetToken(userInfo: UserInfo): Promise<UserDocument> {
     const preUser = new this.userModel({
-      ...validateUserInfo(userInfo),
+      ...userInfo,
+      password: await hash(userInfo.password, 10),
       tokens: [new ObjectId().toHexString()]
     });
     const user = await this.userModel.findOneAndUpdate( 
@@ -31,7 +33,13 @@ export class UsersService {
 
   async validateUserAndGetToken(userSign: UserSign): Promise<UserDocument> {
     const tokenId = new ObjectId().toHexString();
-    return this.userModel.findOneAndUpdate(validateUserSign(userSign), {
+    const user = await this.userModel.findOne({ username: userSign.username });
+    if (!user) {
+      return null;
+    } else if (!await compare(userSign.password, user.password)) {
+      return null;
+    }
+    return this.userModel.findOneAndUpdate({ _id: user._id }, {
       $push: { tokens: tokenId }
     }, {new: true});
   }
