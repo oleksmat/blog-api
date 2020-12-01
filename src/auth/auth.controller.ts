@@ -1,9 +1,9 @@
 import { Body, Controller, Post, Request } from '@nestjs/common';
-import { DtoPipe } from 'src/schemas/dto-pipe';
+import { DtoPipe } from 'src/utils/dto-pipe';
 import { Token } from 'src/schemas/token';
-import { UserData, UserInfo, UserSign, validateUserInfo, validateUserSign } from 'src/schemas/users';
+import { UserInfo, UserSign, validateUserInfo, validateUserSign } from 'src/schemas/users';
 import { AuthService } from './auth.service';
-import { TokenData } from './meta/authinfo.meta';
+import { TokenData } from './meta/tokendata.meta';
 import { Public } from './meta/public.meta';
 
 @Controller('auth')
@@ -30,7 +30,7 @@ export class AuthController {
   }
 
   @Post('/signout')
-  async signOut(@TokenData() tokenData: Token<UserData>): Promise<void> {
+  async signOut(@TokenData() tokenData: Token): Promise<void> {
     return this.authService.revokeToken(tokenData);
   }
 }

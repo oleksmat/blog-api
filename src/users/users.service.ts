@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { Model } from 'mongoose';
-import { User, UserData, UserDocument, UserInfo, UserSign } from 'src/schemas/users';
+import { User, UserDocument, UserInfo, UserSign } from 'src/schemas/users';
 import { compare, hash } from 'bcrypt';
 
 @Injectable()
@@ -54,26 +54,6 @@ export class UsersService {
   async invalidateToken(userId: string, tokenId: string): Promise<void> {
     await this.userModel.findOneAndUpdate({ _id: new ObjectId(userId)}, {
       $pull: { tokens: tokenId }
-    });
-  }
-
-  userToObject(userDoc: UserDocument): UserData {
-    return {
-      id: userDoc.id,
-      username: userDoc.username,
-      password: userDoc.password,
-      first_name: userDoc.first_name,
-      last_name: userDoc.last_name
-    }
-  }
-
-  objectToUser(userData: UserData): UserDocument {
-    return new this.userModel({
-      username: userData.username,
-      password: userData.password,
-      first_name: userData.first_name,
-      last_name: userData.last_name,
-      _id: new ObjectId(userData.id)
     });
   }
 }

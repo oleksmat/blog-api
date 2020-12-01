@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ObjectId } from 'mongodb';
 import { Document } from 'mongoose';
 import { UserInfo } from './user-info';
 
@@ -22,4 +23,15 @@ export class User implements UserInfo {
   tokens: [string];
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserSchema = SchemaFactory.createForClass(User)
+  .set('toJSON', {
+    transform(doc: UserDocument) {
+      return {
+        id: (doc._id as ObjectId).toHexString(),
+        username: doc.username,
+        password: doc.password,
+        first_name: doc.first_name,
+        last_name: doc.last_name
+      };
+    }
+  });

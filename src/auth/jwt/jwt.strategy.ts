@@ -2,7 +2,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { IGNORE_EXPIRATION, JWT_CONFIG } from './jwt.config';
-import { isUserData, UserData } from 'src/schemas/users';
 import { isToken, Token } from 'src/schemas/token';
 import { AuthService } from '../auth.service';
 
@@ -18,8 +17,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any): Promise<Token<UserData>> {
-    if (!isToken(payload, isUserData)) {
+  async validate(payload: any): Promise<Token> {
+    if (!isToken(payload)) {
       throw new Error('should not happen');
     }
 

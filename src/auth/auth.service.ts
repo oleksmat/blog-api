@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Token } from 'src/schemas/token';
-import { UserData, UserDocument, UserInfo, UserSign } from 'src/schemas/users';
+import { UserDocument, UserInfo, UserSign } from 'src/schemas/users';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class AuthService {
     return this.tokenize(token);
   }
 
-  private async tokenize(token: Token<UserData>): Promise<string> {
+  private async tokenize(token: Token): Promise<string> {
     return this.jwtService.sign(token);
   }
 
@@ -39,19 +39,19 @@ export class AuthService {
     return this.tokenize(token);
   }
 
-  async createToken(user: UserDocument): Promise<Token<UserData>> {
+  async createToken(user: UserDocument): Promise<Token> {
     return {
       token_id: user.tokens[user.tokens.length - 1],
-      data: this.users.userToObject(user)
-    }
+      ...user.toJSON()
+    };
   }
 
-  async checkToken(token: Token<UserData>): Promise<boolean> {
-    return this.users.validateToken(token.data.id, token.token_id);
+  async checkToken(token: Token): Promise<boolean> {
+    return this.users.validateToken(token.id, token.token_id);
   }
 
-  async revokeToken(token: Token<UserData>): Promise<void> {
-    return this.users.invalidateToken(token.data.id, token.token_id);
+  async revokeToken(token: Token): Promise<void> {
+    return this.users.invalidateToken(token.id, token.token_id);
   }
 
 }

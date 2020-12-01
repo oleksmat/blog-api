@@ -20,4 +20,14 @@ export class Post implements PostMain {
   creator_id: ObjectId;
 }
 
-export const PostSchema = SchemaFactory.createForClass(Post);
+export const PostSchema = SchemaFactory.createForClass(Post)
+.set('toJSON', {
+  transform(doc: PostDocument) {
+    return {
+      id: doc._id,
+      title: doc.title,
+      content: doc.content,
+      creator_id: doc.creator_id
+    };
+  }
+});

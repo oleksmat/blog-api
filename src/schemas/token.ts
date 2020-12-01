@@ -1,15 +1,38 @@
-export type Token<T> = { data: T, token_id: string };
+import { hasUserInfoData, validateUserInfo } from "./users";
 
-export function isToken<T>(
-  data: any,
-  tGuard: (value: any) => value is T
-): data is Token<T> {
-  return isAnyToken(data) && tGuard(data.data);
+export function hasTokenData(data: any): boolean {
+  return hasUserInfoData(data)
+  && ('id' in data) && (typeof data.id === 'string')
+  && ('token_id' in data) && (typeof data.token_id === 'string');
 }
 
-export function isAnyToken(
-  data: any
-): data is Token<any> {
-  return ('token_id' in data && typeof data.token_id === 'string')
-    && ('data' in data);
+export function isToken(data: any): data is Token {
+  return hasTokenData(data);
+}
+
+export function validateToken(data: any): Token {
+  if (isToken(data)) {
+    return {
+      ...validateUserInfo(data),
+      id: data.id,
+      token_id: data.token_id
+    };
+  } else {
+    return null;
+  }
+}
+
+export interface Token {
+
+  id: string;
+  
+  username: string;
+  
+  password: string;
+
+  first_name: string;
+
+  last_name: string;
+
+  token_id: string;
 }

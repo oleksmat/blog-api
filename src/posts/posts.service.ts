@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { Model } from 'mongoose';
-import { Post, PostData, PostDocument, PostMain } from 'src/schemas/posts';
+import { Post, PostDocument, PostMain } from 'src/schemas/posts';
 
 @Injectable()
 export class PostsService {
@@ -37,23 +37,5 @@ export class PostsService {
 
   async removePost(postId: string): Promise<void> {
     await this.postModel.findByIdAndRemove(new ObjectId(postId));
-  }
-
-  postToObject(postDoc: PostDocument): PostData {
-    return {
-      id: postDoc.id,
-      title: postDoc.title,
-      content: postDoc.content,
-      creator_id: postDoc.creator_id.toHexString()
-    }
-  }
-
-  objectToPost(postData: PostData): PostDocument {
-    return new this.postModel({
-      title: postData.title,
-      content: postData.content,
-      creator_id: new ObjectId(postData.creator_id),
-      _id: new ObjectId(postData.id)
-    });
   }
 }
